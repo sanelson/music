@@ -1,0 +1,61 @@
+% Adapted from example here:
+%   https://tex.stackexchange.com/questions/442783/circle-of-fifths-diagram-with-printed-music-in-latex
+\documentclass[tikz,margin=0.5cm]{standalone}
+\usepackage{musixtex}
+
+\begin{document}
+\begin{tikzpicture}
+
+\pgfmathsetmacro{\CircROne}{4.5}
+\pgfmathsetmacro{\CircRTwo}{7}
+\pgfmathsetmacro{\MusicR}{5.7}
+\pgfmathsetmacro{\InnerLabelR}{3.7}
+\pgfmathsetmacro{\OuterLabelR}{8}
+
+% THE GRID
+\draw (0,0) circle (\CircROne);
+\draw (0,0) circle (\CircRTwo);
+\foreach \X in {0,1,...,12}
+    {
+    \draw (0,0)--++(75-\X*360/12:\CircRTwo);
+    }
+\draw [fill=white] (0,0) circle (1cm);
+
+% THE MUSIC
+\foreach \X in {-6,...,5}
+    {
+    \begin{scope}[shift={(90-\X*360/12:\MusicR)},xshift=-0.3cm]
+        \clip (-1,-1) rectangle (1,1);
+        \draw (0,0) node 
+            {
+            \begin{music}
+            \generalsignature{\X}
+            \nostartrule
+            \startextract
+            \notes\en
+            \zendextract
+            \end{music}
+            };
+    \end{scope}
+    }
+
+% INNER LABELS
+\foreach \X/\KeyText in {-4/F,-3/C,-2/G,-1/D,0/A,1/E,2/B,3/F$\sharp$,4/C$\sharp$} 
+    {
+    \draw (90-\X*360/12:\InnerLabelR) node {\KeyText~Minor};
+    }
+\draw (90-5*360/12:\InnerLabelR) node [align=center] {A$\flat$ Minor\\ G$\sharp$ Minor};
+\draw (90+6*360/12:\InnerLabelR) node [align=center] {D$\sharp$ Minor\\ E$\flat$ Minor};
+\draw (90+5*360/12:\InnerLabelR) node [align=center] {A$\sharp$ Minor\\ B$\flat$ Minor};
+
+% OUTER LABELS    
+\foreach \X/\KeyText in {-4/A$\flat$,-3/E$\flat$,-2/B$\flat$,-1/F,0/C,1/G,2/D,3/A,4/E} 
+    {
+    \draw (90-\X*360/12:\OuterLabelR) node {\KeyText~Major};
+    }
+\draw (90-5*360/12:\OuterLabelR) node [align=center] {B Major\\ C$\flat$ Major};
+\draw (90+6*360/12:\OuterLabelR) node [align=center] {F$\sharp$ Major\\ G$\flat$ Major};
+\draw (90+5*360/12:\OuterLabelR) node [align=center] {D$\flat$ Major\\ C$\sharp$ Major};
+
+\end{tikzpicture}
+\end{document}
