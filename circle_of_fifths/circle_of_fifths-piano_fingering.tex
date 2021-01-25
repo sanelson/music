@@ -1,16 +1,81 @@
 % Adapted from example here:
 %   https://tex.stackexchange.com/questions/442783/circle-of-fifths-diagram-with-printed-music-in-latex
-\documentclass[tikz,margin=0.5cm]{standalone}
+% Used fingering information from:
+%   https://www.onlinepianocoach.com/melodic-minor-scales.html
+%   https://bandnotes.info/tidbits/scales/half-whl.htm
+%   Kjos Music Press multi-colored piano student handout
+% TODO:
+% 1. Add notes about turnaround parenthesis
+% 2. Add notes about "missing" definitions like g#m RH melodic. If they're missing, they're the same
+%      as the natural/harmonic
+% 3. Create variables to store key color groups
+% 4. Format LaTeX code so that it is more readable, add more comments
+% 5. Create letter and a4 versions of the layout
+%\documentclass[tikz,margin=0.5cm]{standalone}
+\documentclass{article}
+\usepackage[a4paper,margin=0.5cm,landscape]{geometry}
+%\usepackage[letterpaper,margin=0.5cm]{geometry}
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{xfrac}
 \usepackage{musixtex}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+%\usepackage{floatrow}
+\usepackage{vwcol}
+\usepackage{caption}
+\usepackage{makecell}
+\usepackage{booktabs} % To thicken table lines
+\usepackage{amsmath,amssymb} % Gives us some helpful symbols (arrows especially)
+% Table float box with bottom caption, box width adjusted to content
+%\newfloatcommand{capbtabbox}{table}[][\FBwidth]
+%\newfloatcommand{capbtabbox}{table}[\Xhsize]
 
 \begin{document}
+
+%\section{Circle of Fifth's - With Piano Fingering}
+\begin{vwcol}[rule=none, sep=0, widths={0.75, 0.25}, justify=flush]
+%\begin{figure}
+%\centering
 \begin{tikzpicture}
 
 \pgfmathsetmacro{\CircROne}{4.5}
 \pgfmathsetmacro{\CircRTwo}{7}
 \pgfmathsetmacro{\MusicR}{5.7}
 \pgfmathsetmacro{\InnerLabelR}{3.7}
-\pgfmathsetmacro{\OuterLabelR}{8}
+%\pgfmathsetmacro{\OuterLabelR}{8}
+\pgfmathsetmacro{\OuterLabelR}{9}
+
+% The filling colors
+% Used this awesome example
+% https://tex.stackexchange.com/a/66265
+% center c1
+\coordinate (c1) at (0,0);
+
+%% \draw[fill=green]
+%% % radius=3mm, initial=0, final=90
+%% %([shift={(0:3mm)}]c1) arc (0:90:3mm)
+%% ($(c1) + (75-1*360/12:1cm)$) arc (75-1*360/12:75-5*360/12:1cm)
+%% --
+%% % radius=\CircROne, reversed
+%% ($(c1) + (75-5*360/12:\CircROne)$) arc (75-5*360/12:75-1*360/12:\CircROne)
+%% -- cycle;
+
+
+%\foreach \X/\KeyText in {-4/F,-3/C,-2/G,-1/D,0/A,1/E,2/B,3/F$\sharp$,4/C$\sharp$} 
+%\foreach \X in {-6,...,5}
+
+\foreach \KeyRangeStart/\KeyRangeEnd/\KeyColor in {-4/1/Orange!40,-5/-4/Yellow!40,1/2/Yellow!40,6/7/Blue!20,5/6/Cyan!30,2/4/Green!40,4/5/CarnationPink!60}
+{
+\draw[fill=\KeyColor]
+% radius=3mm, initial=0, final=90
+%([shift={(0:3mm)}]c1) arc (0:90:3mm)
+($(c1) + (75-\KeyRangeStart*360/12:1cm)$) arc (75-\KeyRangeStart*360/12:75-\KeyRangeEnd*360/12:1cm)
+--
+% radius=\CircROne, reversed
+($(c1) + (75-\KeyRangeEnd*360/12:\CircROne)$) arc (75-\KeyRangeEnd*360/12:75-\KeyRangeStart*360/12:\CircROne)
+-- cycle;
+}
+
 
 % THE GRID
 \draw (0,0) circle (\CircROne);
@@ -24,7 +89,8 @@
 % THE MUSIC
 \foreach \X in {-6,...,5}
     {
-    \begin{scope}[shift={(90-\X*360/12:\MusicR)},xshift=-0.3cm]
+%    \begin{scope}[shift={(90-\X*360/12:\MusicR)},xshift=-0.3cm]
+    \begin{scope}[shift={(90-\X*360/12:\MusicR)}]
         \clip (-1,-1) rectangle (1,1);
         \draw (0,0) node 
             {
@@ -49,13 +115,115 @@
 \draw (90+5*360/12:\InnerLabelR) node [align=center] {A$\sharp$ Minor\\ B$\flat$ Minor};
 
 % OUTER LABELS    
-\foreach \X/\KeyText in {-4/A$\flat$,-3/E$\flat$,-2/B$\flat$,-1/F,0/C,1/G,2/D,3/A,4/E} 
+  \foreach \X/\KeyText/\RHfinger/\LHfinger in {
+    -4/A$\flat$/34(23).123.1234.123.123/321.4321.321.4321.13(2),
+    -3/E$\flat$/3(2).1234.123.1234.123/321.4321.321.4321.3(2),
+    -2/B$\flat$/4(2).123.1234.123.1234/321.4321.321.4321.3(2),
+    -1/F/1234.123.1234.1234/54321.321.4321.321,
+    0/C/123.1234.123.12345/54321.321.4321.321,
+    1/G/123.1234.123.12345/54321.321.4321.321,
+    2/D/123.1234.123.12345/54321.321.4321.321,
+    3/A/123.1234.123.12345/54321.321.4321.321,
+    4/E/123.1234.123.12345/54321.321.4321.321} 
     {
-    \draw (90-\X*360/12:\OuterLabelR) node {\KeyText~Major};
-    }
-\draw (90-5*360/12:\OuterLabelR) node [align=center] {B Major\\ C$\flat$ Major};
-\draw (90+6*360/12:\OuterLabelR) node [align=center] {F$\sharp$ Major\\ G$\flat$ Major};
-\draw (90+5*360/12:\OuterLabelR) node [align=center] {D$\flat$ Major\\ C$\sharp$ Major};
+      \draw (90-\X*360/12:\OuterLabelR) node [align=center] {\KeyText~Major\\ 
+      \footnotesize \textbf{RH} \RHfinger\\ 
+      \footnotesize \textbf{LH} \LHfinger
+    };
+}
+\draw (90-5*360/12:\OuterLabelR) node [align=center] {B Major\\ C$\flat$ Major\\ 
+  \footnotesize \textbf{RH} 123.1234.123.12345\\ 
+  \footnotesize \textbf{LH} 4321.4321.321.4321 
+};
+\draw (90+6*360/12:\OuterLabelR) node [align=center] {F$\sharp$ Major\\ G$\flat$ Major\\
+  \footnotesize \textbf{RH} 234.123.1234.123.12\\ 
+  \footnotesize \textbf{LH} 4321.321.4321.321.4(2) 
+};
+\draw (90+5*360/12:\OuterLabelR) node [align=center] {D$\flat$ Major\\ C$\sharp$ Major\\
+  \footnotesize \textbf{RH} 23.1234.123.1234.12\\ 
+  \footnotesize \textbf{LH} 321.4321.321.4321.3(2)
+};
 
 \end{tikzpicture}
+%\end{figure}
+
+\newpage
+
+\begin{tabular}{ l l } 
+\toprule
+\multicolumn{2}{c}{\textbf{Minor Key Fingering}} \\
+\toprule
+%Key & Fingering \\ \midrule
+%  Cm, Gm, Dm, Am, Em & \makecell[l]{ \textbf{RH} 123.1234.123.12345 \\ \textbf{LH} 54321.321.4321.321 } \\  
+  \cellcolor{Orange!40} \makecell[l]{Cm, Gm\\ Dm, Am\\ Em} & \makecell[l]{ \textbf{RH} 123.1234.123.12345 \\ \textbf{LH} 54321.321.4321.321 } \\  
+  \midrule
+  \cellcolor{Yellow!40} \makecell[l]{Fm\\ Bm} & \makecell[l]{ \textbf{RH} 1234.123.1234.1234 \\ \textbf{LH} 54321.321.4321.321 } \\  
+  \midrule
+  \cellcolor{Blue!20} \makecell[l]{B$\flat$m\\ A$\sharp$m} & \makecell[l]{ \textbf{RH} 4(2).123.1234.123.1234 \\ \textbf{LH} 21.321.4321.321.432 } \\  
+  \midrule
+  \cellcolor{Cyan!30} \makecell[l]{E$\flat$m\\ D$\sharp$m} & \makecell[l]{ \textbf{RH} 3(2).1234.123.1234.123 \\ \textbf{LH} 21.4321.321.4321.32 } \\  
+  \midrule
+%  \makecell[l]{F$\sharp$m\\ C$\sharp$m\\ G$\sharp$m} & \makecell[l]{ \textbf{RH} 3(2).1234.123.1234.123 } \\  
+
+  %\makecell[l]{C$\sharp$m} & \makecell[l]{ \textbf{RH} 34(23).123.1234.123.123 (Natural/Harmonic) \\
+  %                                     \textbf{RH} UP 23.1234.123.1234.1(3) DOWN 321.321.4321.321.43(32) (Melodic) } \\  
+%  \begin{tabular}{@{}l@{}}
+  \cellcolor{Green!40} \makecell[l]{C$\sharp$m, F$\sharp$m} & \textbf{RH} (Natural/Harmonic) \\
+  \cellcolor{Green!40!Cyan!40} \makecell[l]{G$\sharp$m} & \hspace*{0.5cm}34(23).123.1234.123.123 \\ 
+%  \end{tabular}
+  \midrule
+  \cellcolor{Green!40} \makecell[l]{C$\sharp$m\\ F$\sharp$m} & \makecell[l]{
+                                           \textbf{RH} (Melodic) \\
+                                           \hspace*{0.5cm}$\Rightarrow$23.1234.123.1234.1(3)\\
+                                           \hspace*{0.5cm}$\Leftarrow$321.321.4321.321.43(32)} \\  
+  \midrule
+  \cellcolor{Green!40} \makecell[l]{C$\sharp$m} & \makecell[l]{ \textbf{LH} (Natural/Harmonic) \\
+                                           \hspace*{0.5cm}321.4321.321.4321.3(2) \\
+                                           \textbf{LH} (Melodic) \\
+                                           \hspace*{0.5cm}$\Rightarrow$321.4321.321.4321.3 \\
+                                           \hspace*{0.5cm}$\Leftarrow$3.1234.123.1234.123} \\  
+  \midrule
+  \cellcolor{Green!40} \makecell[l]{F$\sharp$m} & \makecell[l]{ \textbf{LH} (Natural/Harmonic) \\
+                                           \hspace*{0.5cm}4321.321.4321.321.4(2) \\
+                                           \textbf{LH} (Melodic) \\
+                                           \hspace*{0.5cm}$\Rightarrow$4321.321.4321.321.4(2) \\
+                                           \hspace*{0.5cm}$\Leftarrow$4(2).123.1234.123.1234} \\  
+  \midrule
+  \cellcolor{CarnationPink!60} \makecell[l]{G$\sharp$m\\ A$\flat$m} & \makecell[l]{
+                                           \textbf{LH} (Natural) \\
+                                           \hspace*{0.5cm}321.321.4321.321.43(32) \\
+                                           \textbf{LH} (Harmonic) \\
+                                           \hspace*{0.5cm}321.4321.321.4321.3(2) \\
+                                           \textbf{LH} (Melodic) \\
+                                           \hspace*{0.5cm}$\Rightarrow$321.4321.321.4321.3(2) \\
+                                           \hspace*{0.5cm}$\Leftarrow$34(23).123.1234.123.123} \\  
+
+
+%  \makecell[l]{C$\sharp$m} & \makecell[l]{ \textbf{LH} 321.4321.321.4321.3(2) (Natural/Harmonic) \\
+%                                     \textbf{LH} UP 321.4321.321.4321.3 DOWN 3.1234.123.1234.123 (Melodic) } \\  
+%  \makecell[l]{F$\sharp$m\\ C$\sharp$m\\ G$\sharp$m} & \makecell[l]{ \textbf{RH} 3(2).1234.123.1234.123 \\ \textbf{LH} 21.4321.321.4321.32 } \\  
+  \bottomrule
+\end{tabular}
+
+%\vfill
+
+\begin{tabular}{cl} 
+  \toprule
+  \multicolumn{2}{c}{\textbf{Key Scale Patterns}} \\
+  \toprule
+%  Key & Scale Pattern \\
+%  \midrule
+  \makecell[l]{Major} & {\color{blue}R} W W {\color{Orange}h} W W W {\color{Orange}h} \\
+  \midrule
+  \makecell[l]{Natural\\ Minor} & {\color{blue}R} W {\color{Orange}h} W W {\color{Orange}h} W W \\
+  \midrule
+  \makecell[l]{Harmonic\\ Minor} & {\color{blue}R} W {\color{Orange}h} W W {\color{Orange}h}  {\color{Maroon}W\raisebox{0.25ex}{+}\sfrac{1}{2}} {\color{Orange}h} \\
+  \midrule
+  \makecell[l]{Melodic\\ Minor} & \makecell[l]{$\Rightarrow$ {\color{blue}R} W {\color{Orange}h} W W W W {\color{Orange}h}  \\
+                               $\Leftarrow$ {\color{blue}R} W {\color{Orange}h} W W {\color{Orange}h} W W} \\
+  \bottomrule
+\end{tabular}
+
+\end{vwcol}
+
 \end{document}
