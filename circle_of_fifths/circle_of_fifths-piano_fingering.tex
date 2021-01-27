@@ -11,82 +11,43 @@
 % 3. Create variables to store key color groups
 % 4. Format LaTeX code so that it is more readable, add more comments
 % 5. Create letter and a4 versions of the layout
-%\documentclass[tikz,margin=0.5cm]{standalone}
 %\documentclass{article}
 \documentclass[9pt]{extarticle}
-
 \usepackage[a4paper,margin=0.5cm,landscape]{geometry}
-%\usepackage[letterpaper,margin=0.5cm]{geometry}
 \usepackage[dvipsnames,table]{xcolor}
 \usepackage{xfrac}
 \usepackage{musixtex}
 \usepackage{tikz}
 \usetikzlibrary{calc}
-%\usepackage{floatrow}
-%\usepackage{vwcol}
 \usepackage{caption}
 \usepackage{makecell}
 \usepackage{booktabs} % To thicken table lines
 \usepackage{amsmath,amssymb} % Gives us some helpful symbols (arrows especially)
-% Table float box with bottom caption, box width adjusted to content
-%\newfloatcommand{capbtabbox}{table}[][\FBwidth]
-%\newfloatcommand{capbtabbox}{table}[\Xhsize]
 
 \begin{document}
-
-%\section{Circle of Fifth's - With Piano Fingering}
-%\begin{vwcol}[rule=none, sep=0, widths={0.7, 0.3}, justify=flush]
-%\begin{vwcol}[rule=none, sep=0, widths={0.65, 0.35}, justify=flush]
-%\begin{figure}
-%\centering
-
 \begin{minipage}[c]{0.75\textwidth}
-
-%  \begin{document}
-%  \begin{vplace}[0.7]
-%    This is some text to be centered vertically.
-%  \end{vplace}
 \begin{tikzpicture}
 
 \pgfmathsetmacro{\CircROne}{4}
 \pgfmathsetmacro{\CircRTwo}{6.5}
 \pgfmathsetmacro{\MusicR}{5.2}
 \pgfmathsetmacro{\InnerLabelR}{3.3}
-%\pgfmathsetmacro{\OuterLabelR}{8}
 \pgfmathsetmacro{\OuterLabelRone}{8.5}
 \pgfmathsetmacro{\OuterLabelRtwo}{8.1}
 
 % The filling colors
 % Used this awesome example
 % https://tex.stackexchange.com/a/66265
-% center c1
 \coordinate (c1) at (0,0);
-
-%% \draw[fill=green]
-%% % radius=3mm, initial=0, final=90
-%% %([shift={(0:3mm)}]c1) arc (0:90:3mm)
-%% ($(c1) + (75-1*360/12:1cm)$) arc (75-1*360/12:75-5*360/12:1cm)
-%% --
-%% % radius=\CircROne, reversed
-%% ($(c1) + (75-5*360/12:\CircROne)$) arc (75-5*360/12:75-1*360/12:\CircROne)
-%% -- cycle;
-
-
-%\foreach \X/\KeyText in {-4/F,-3/C,-2/G,-1/D,0/A,1/E,2/B,3/F$\sharp$,4/C$\sharp$} 
-%\foreach \X in {-6,...,5}
 
 \foreach \KeyRangeStart/\KeyRangeEnd/\KeyColor in {-4/1/Orange!40,-5/-4/Yellow!40,1/2/Yellow!40,6/7/Blue!20,5/6/Cyan!30,2/4/Green!40,4/5/CarnationPink!60}
 {
 \draw[fill=\KeyColor]
-% radius=3mm, initial=0, final=90
-%([shift={(0:3mm)}]c1) arc (0:90:3mm)
 ($(c1) + (75-\KeyRangeStart*360/12:1cm)$) arc (75-\KeyRangeStart*360/12:75-\KeyRangeEnd*360/12:1cm)
 --
-% radius=\CircROne, reversed
 ($(c1) + (75-\KeyRangeEnd*360/12:\CircROne)$) arc (75-\KeyRangeEnd*360/12:75-\KeyRangeStart*360/12:\CircROne)
 -- cycle;
 }
-
 
 % THE GRID
 \draw (0,0) circle (\CircROne);
@@ -164,8 +125,6 @@
 \toprule
 \multicolumn{2}{c}{\textbf{Minor Key Fingering}} \\
 \toprule
-%Key & Fingering \\ \midrule
-%  Cm, Gm, Dm, Am, Em & \makecell[l]{ \textbf{RH} 123.1234.123.12345 \\ \textbf{LH} 54321.321.4321.321 } \\  
   \cellcolor{Orange!40} \makecell[l]{Cm, Gm\\ Dm, Am\\ Em} & \makecell[l]{ \textbf{RH} 123.1234.123.12345 \\ \textbf{LH} 54321.321.4321.321 } \\  
   \midrule
   \cellcolor{Yellow!40} \makecell[l]{Fm\\ Bm} & \makecell[l]{ \textbf{RH} 1234.123.1234.1234 \\ \textbf{LH} 54321.321.4321.321 } \\  
@@ -174,14 +133,8 @@
   \midrule
   \cellcolor{Cyan!30} \makecell[l]{E$\flat$m\\ D$\sharp$m} & \makecell[l]{ \textbf{RH} 3(2).1234.123.1234.123 \\ \textbf{LH} 21.4321.321.4321.32 } \\  
   \midrule
-%  \makecell[l]{F$\sharp$m\\ C$\sharp$m\\ G$\sharp$m} & \makecell[l]{ \textbf{RH} 3(2).1234.123.1234.123 } \\  
-
-  %\makecell[l]{C$\sharp$m} & \makecell[l]{ \textbf{RH} 34(23).123.1234.123.123 (Natural/Harmonic) \\
-  %                                     \textbf{RH} UP 23.1234.123.1234.1(3) DOWN 321.321.4321.321.43(32) (Melodic) } \\  
-%  \begin{tabular}{@{}l@{}}
   \cellcolor{Green!40} \makecell[l]{C$\sharp$m, F$\sharp$m} & \textbf{RH} (Natural/Harmonic) \\
   \cellcolor{CarnationPink!60} \makecell[l]{G$\sharp$m} & \hspace*{0.5cm}34(23).123.1234.123.123 \\ 
-%  \end{tabular}
   \midrule
   \cellcolor{Green!40} \makecell[l]{C$\sharp$m\\ F$\sharp$m} & \makecell[l]{
                                            \textbf{RH} (Melodic) \\
@@ -209,22 +162,15 @@
                                            \hspace*{0.5cm}$\Rightarrow$321.4321.321.4321.3(2) \\
                                            \hspace*{0.5cm}$\Leftarrow$34(23).123.1234.123.123} \\  
 
-
-%  \makecell[l]{C$\sharp$m} & \makecell[l]{ \textbf{LH} 321.4321.321.4321.3(2) (Natural/Harmonic) \\
-%                                     \textbf{LH} UP 321.4321.321.4321.3 DOWN 3.1234.123.1234.123 (Melodic) } \\  
-%  \makecell[l]{F$\sharp$m\\ C$\sharp$m\\ G$\sharp$m} & \makecell[l]{ \textbf{RH} 3(2).1234.123.1234.123 \\ \textbf{LH} 21.4321.321.4321.32 } \\  
   \bottomrule
 \end{tabular}
 
-%\vfill
-  \vspace{1.5cm}
+\vspace{1.5cm}
 
 \begin{tabular}{cl} 
   \toprule
   \multicolumn{2}{c}{\textbf{Key Scale Patterns}} \\
   \toprule
-%  Key & Scale Pattern \\
-%  \midrule
   \makecell[l]{Major} & {\color{blue}R} W W {\color{Orange}h} W W W {\color{Orange}h} \\
   \midrule
   \makecell[l]{Natural\\ Minor} & {\color{blue}R} W {\color{Orange}h} W W {\color{Orange}h} W W \\
